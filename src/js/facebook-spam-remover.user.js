@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Span
 // @namespace    http://tampermonkey.net/
-// @version      0.0.1
+// @version      0.0.2
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -12,4 +12,4 @@
 // ==/UserScript==
 (function () {
     console.log("started")
-})
+})();
