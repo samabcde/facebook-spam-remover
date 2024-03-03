@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -21,6 +21,7 @@ const facebookSpamRemover = function () {
 
     function hideSponsorPost() {
         let posts = getPosts(getLanguageLabel(language, "post"))
+        console.log(`post length: ${posts.length}`)
         if (posts.length === 0) return
         let sponsorLabelId = getSponsorLabelId(getLanguageLabel(language, "sponsor"))
         Array.from(posts)
