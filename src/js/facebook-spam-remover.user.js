@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -24,6 +24,7 @@ const facebookSpamRemover = function () {
         console.log(`post length: ${posts.length}`)
         if (posts.length === 0) return
         let sponsorLabelId = getSponsorLabelId(getLanguageLabel(language, "sponsor"))
+        if (sponsorLabelId === "") return
         Array.from(posts)
             .filter(el => isSponsorPost(el, sponsorLabelId))
             .forEach(el => el.style.display = 'none')
@@ -58,9 +59,12 @@ const facebookSpamRemover = function () {
      * @return {String}
      */
     function getSponsorLabelId(sponsorLabel) {
-        return Array.from(document.querySelectorAll("body>div[hidden=true]>div>span"))
+        let sponsorLabelSpan = Array.from(document.querySelectorAll("body>div[hidden=true]>div>span"))
             .find(el => el.textContent === sponsorLabel)
-            .id
+        if (sponsorLabelSpan === undefined) {
+            return "";
+        }
+        return sponsorLabelSpan.id
     }
 
     /**
