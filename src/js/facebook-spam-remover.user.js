@@ -22,9 +22,9 @@ const facebookSpamRemover = function () {
 
     function hideSponsorPost() {
         let posts = getPosts(getLanguageLabel(language, "post"))
-        console.log(`post length: ${posts.length}`)
         if (posts.length === 0) return
         if (posts.length === lastRunPostLength) return
+        console.log(`post length: ${posts.length}`)
         let sponsorLabelId = getSponsorLabelId(getLanguageLabel(language, "sponsor"))
         if (sponsorLabelId === "") return
         Array.from(posts)
@@ -33,10 +33,17 @@ const facebookSpamRemover = function () {
         lastRunPostLength = posts.length
     }
 
+    /**
+     * @return {String}
+     */
     function getLanguage() {
         return document.querySelector("html").getAttribute("lang")
     }
 
+    /**
+     * @param {String} postLabel
+     * @return {HTMLCollection}
+     */
     function getPosts(postLabel) {
         let parent = Array.from(document.querySelectorAll("div[role=main] h3"))
             .find(el => el.textContent === postLabel)
