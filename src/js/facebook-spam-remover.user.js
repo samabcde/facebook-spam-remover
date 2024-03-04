@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -23,14 +23,14 @@ const facebookSpamRemover = function () {
     function hideSponsorPost() {
         let posts = getPosts(getLanguageLabel(language, "post"))
         if (posts.length === 0) return
-        if (posts.length === lastRunPostLength){
-            console.log(`post length no change: ${posts.length}`)
+        if (posts.length === lastRunPostLength) {
+            console.debug(`post length no change: ${posts.length}`)
             return
         }
         let sponsorUseTextId = getSponsorUseTextId(getLanguageLabel(language, "sponsor"))
         let sponsorLabelId = getSponsorLabelId(getLanguageLabel(language, "sponsor"))
         if (sponsorUseTextId === "" && sponsorLabelId === "") {
-            console.log(`sponsorUseTextId and sponsorLabelId are empty`)
+            console.debug(`sponsorUseTextId and sponsorLabelId are empty`)
             return
         }
         Array.from(posts)
@@ -103,12 +103,13 @@ const facebookSpamRemover = function () {
      * @return {Boolean}
      */
     function isSponsorPost(post, sponsorLabelId, sponsorUseTextId) {
+        console.debug(`sponsorLabelId: ${sponsorLabelId}, sponsorUseTextId: ${sponsorUseTextId}`)
         if (sponsorUseTextId !== "" && post.querySelectorAll(`use[xlink\\:href='#${sponsorUseTextId}']`).length > 0) {
-            console.log(`${post.className} ${post.innerHTML.length} is sponsor post by xlink:href ${sponsorUseTextId}`);
+            console.debug(`${post.className} ${post.innerHTML.length} is sponsor post by xlink:href ${sponsorUseTextId}`);
             return true;
         }
         if (sponsorLabelId !== "" && post.querySelectorAll(`span[aria-labelledby='${sponsorLabelId}']`).length > 0) {
-            console.log(`${post.className} ${post.innerHTML.length} is sponsor post by aria-labelledby ${sponsorLabelId}`);
+            console.debug(`${post.className} ${post.innerHTML.length} is sponsor post by aria-labelledby ${sponsorLabelId}`);
             return true;
         }
         return false;
