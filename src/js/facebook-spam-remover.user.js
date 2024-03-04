@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.2.0
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -25,10 +25,11 @@ const facebookSpamRemover = function () {
         if (posts.length === 0) return
         if (posts.length === lastRunPostLength) return
         console.log(`post length: ${posts.length}`)
+        let sponsorUseTextId = getSponsorUseTextId(getLanguageLabel(language, "sponsor"))
         let sponsorLabelId = getSponsorLabelId(getLanguageLabel(language, "sponsor"))
-        if (sponsorLabelId === "") return
+        if (sponsorUseTextId === "" && sponsorLabelId === "") return
         Array.from(posts)
-            .filter(el => isSponsorPost(el, sponsorLabelId))
+            .filter(el => isSponsorPost(el, sponsorLabelId, sponsorUseTextId))
             .forEach(el => el.style.display = 'none')
         lastRunPostLength = posts.length
     }
@@ -78,12 +79,32 @@ const facebookSpamRemover = function () {
     }
 
     /**
+     * @param {String} sponsorLabel
+     * @return {String}
+     */
+    function getSponsorUseTextId(sponsorLabel) {
+        let sponsorUseText = Array.from(document.querySelectorAll("body>div>div>svg>text"))
+            .find(el => el.textContent === sponsorLabel)
+        if (sponsorUseText === undefined) {
+            return "";
+        }
+        return sponsorUseText.id
+    }
+
+    /**
      * @param {Element} post
      * @param {String} sponsorLabelId
+     * @param {String} sponsorUseTextId
      * @return {Boolean}
      */
-    function isSponsorPost(post, sponsorLabelId) {
-        return post.querySelectorAll(`span[aria-labelledby='${sponsorLabelId}']`).length > 0
+    function isSponsorPost(post, sponsorLabelId, sponsorUseTextId) {
+        if (sponsorUseTextId !== "" && post.querySelectorAll(`use[xlink\\:href='#${sponsorUseTextId}']`).length > 0) {
+            return true;
+        }
+        if (sponsorLabelId !== "" && post.querySelectorAll(`span[aria-labelledby='${sponsorLabelId}']`).length > 0) {
+            return true;
+        }
+        return false;
     }
 
     // for unit testing
@@ -93,6 +114,7 @@ const facebookSpamRemover = function () {
         "getPosts": getPosts,
         "getSponsorLabelId": getSponsorLabelId,
         "isSponsorPost": isSponsorPost,
+        "getSponsorUseTextId": getSponsorUseTextId,
     };
 }
 facebookSpamRemover()

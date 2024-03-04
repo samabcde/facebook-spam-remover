@@ -46,12 +46,26 @@ describe("facebook-spam-remover spec", () => {
         let sponsorLabelId = getSponsorLabelId("贊助")
         expect(sponsorLabelId).toBe(":rb:")
     })
+    it("getSponsorUseTextId", () => {
+        const getSponsorUseTextId = require("../facebook-spam-remover.user")()["getSponsorUseTextId"]
+        resetDocument()
+        let sponsorUseTextId = getSponsorUseTextId("贊助")
+        expect(sponsorUseTextId).toBe("SvgT1")
+    })
 
-    it("isSponsorPost", () => {
-        const isSponsorPost = require("../facebook-spam-remover.user")()["isSponsorPost"]
-        let post = fromHTML("<div><span aria-labelledby='sponsor'>test</span></div>")
-        expect(isSponsorPost(post, 'sponsor')).toBeTruthy()
-        expect(isSponsorPost(post, 'not-exist-id')).toBeFalsy()
+    describe("isSponsorPost", () => {
+        it("determine by use tag", () => {
+            const isSponsorPost = require("../facebook-spam-remover.user")()["isSponsorPost"]
+            let post = fromHTML("<div><use xlink:href='#sponsor' xmlns:xlink='http://www.w3.org/1999/xlink'></use></div>")
+            expect(isSponsorPost(post, "", "sponsor")).toBeTruthy()
+            expect(isSponsorPost(post, "", "not-exist-id")).toBeFalsy()
+        })
+        it("determine by aria-labelledby", () => {
+            const isSponsorPost = require("../facebook-spam-remover.user")()["isSponsorPost"]
+            let post = fromHTML("<div><span aria-labelledby='sponsor'>test</span></div>")
+            expect(isSponsorPost(post, 'sponsor', "")).toBeTruthy()
+            expect(isSponsorPost(post, 'not-exist-id', "")).toBeFalsy()
+        })
     })
 
     it("sponsor posts are hidden", () => {
@@ -59,6 +73,7 @@ describe("facebook-spam-remover spec", () => {
         let posts = getPosts("動態消息貼文")
         expect(posts[0].style.display).toBe("")
         expect(posts[1].style.display).toBe("none")
+        expect(posts[4].style.display).toBe("none")
     })
 })
 
