@@ -46,6 +46,7 @@ describe("facebook-spam-remover spec", () => {
         let sponsorLabelId = getSponsorLabelId("贊助")
         expect(sponsorLabelId).toBe(":rb:")
     })
+
     it("getSponsorUseTextId", () => {
         const getSponsorUseTextId = require("../facebook-spam-remover.user")()["getSponsorUseTextId"]
         resetDocument()
