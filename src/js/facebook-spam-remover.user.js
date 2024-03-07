@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -25,7 +25,6 @@ const facebookSpamRemover = function () {
         if (posts.length === 0) return
         if (posts.length === lastRunPostLength) {
             console.debug(`post length no change: ${posts.length}`)
-            return
         }
         let sponsorUseTextId = getSponsorUseTextId(getLanguageLabel(language, "sponsor"))
         let sponsorLabelId = getSponsorLabelId(getLanguageLabel(language, "sponsor"))

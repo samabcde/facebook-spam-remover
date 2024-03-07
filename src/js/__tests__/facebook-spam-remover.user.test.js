@@ -8,9 +8,9 @@ beforeAll(() => {
     const JSDOM = require("jsdom").JSDOM;
     jsdom = new JSDOM(html);
 })
+
 beforeEach(() => {
     resetDocument()
-    console.log("finish setup")
 })
 
 function resetDocument() {
