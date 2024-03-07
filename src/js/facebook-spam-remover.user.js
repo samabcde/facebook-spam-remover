@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.2.5
+// @version      0.2.6
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -23,7 +23,6 @@ const facebookSpamRemover = function () {
     }, 1000);
     var lastRunPostLength = 0;
 
-    // document.querySelectorAll("div[role=main] h3")[2].parentElement.querySelectorAll("a[href='#']:not([aria-label])")
     function hideSponsorPost() {
         let posts = getPosts(getLanguageLabel(language, "post"))
         if (posts.length === 0) return
@@ -50,6 +49,7 @@ const facebookSpamRemover = function () {
     }
 
     function focusHiddenUrlPostLinks() {
+        let postLabel = getLanguageLabel(language, "post")
         let parent = Array.from(document.querySelectorAll("div[role=main] h3"))
             .find(el => el.textContent === postLabel)
             .parentElement
