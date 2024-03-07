@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.2.6
+// @version      0.3.0
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -54,7 +54,7 @@ const facebookSpamRemover = function () {
             .find(el => el.textContent === postLabel)
             .parentElement
         Array.from(parent.querySelectorAll("a[href='#']:not([aria-label])"))
-            .forEach(value => value.focus())
+            .forEach(value => value.focus({preventScroll: true}))
     }
 
     /**
@@ -124,6 +124,10 @@ const facebookSpamRemover = function () {
         if (sponsorLabelId !== "" && post.querySelectorAll(`span[aria-labelledby='${sponsorLabelId}']`).length > 0) {
             console.debug(`${post.className} ${post.innerHTML.length} is sponsor post by aria-labelledby ${sponsorLabelId}`);
             return true;
+        }
+        if (post.querySelectorAll("a[href^='/ads/about']").length > 0) {
+            console.debug(`${post.className} ${post.innerHTML.length} is sponsor post by link start with "/ads/about/"`);
+            return true
         }
         return false;
     }
