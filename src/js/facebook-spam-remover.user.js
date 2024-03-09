@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.3.0
+// @version      0.3.1
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -14,6 +14,7 @@ const facebookSpamRemover = function () {
     console.log("start facebook spam remover")
     const language = getLanguage()
     console.log(`language is ${language}`)
+    focusHiddenUrlPostLinks()
     hideSponsorPost()
     setInterval(() => {
         focusHiddenUrlPostLinks()
@@ -25,6 +26,7 @@ const facebookSpamRemover = function () {
 
     function hideSponsorPost() {
         let posts = getPosts(getLanguageLabel(language, "post"))
+            .filter(value => value.style.display !== 'none')
         if (posts.length === 0) return
         if (posts.length === lastRunPostLength) {
             console.debug(`post length no change: ${posts.length}`)
@@ -33,9 +35,8 @@ const facebookSpamRemover = function () {
         let sponsorLabelId = getSponsorLabelId(getLanguageLabel(language, "sponsor"))
         if (sponsorUseTextId === "" && sponsorLabelId === "") {
             console.debug(`sponsorUseTextId and sponsorLabelId are empty`)
-            return
         }
-        Array.from(posts)
+        posts
             .filter(el => isSponsorPost(el, sponsorLabelId, sponsorUseTextId))
             .forEach(el => el.style.display = 'none')
         lastRunPostLength = posts.length
@@ -59,13 +60,13 @@ const facebookSpamRemover = function () {
 
     /**
      * @param {String} postLabel
-     * @return {HTMLCollection}
+     * @return {Element[]}
      */
     function getPosts(postLabel) {
         let parent = Array.from(document.querySelectorAll("div[role=main] h3"))
             .find(el => el.textContent === postLabel)
             .parentElement
-        return Array.from(parent.children).find(el => el.tagName === "DIV").children
+        return Array.from(Array.from(parent.children).find(el => el.tagName === "DIV").children)
     }
 
     /**
