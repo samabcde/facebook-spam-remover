@@ -26,11 +26,31 @@ describe("facebook-spam-remover spec", () => {
         expect(getLanguage()).toBe("en")
     })
 
-    it("getLanguageLabel", () => {
-        const getLanguageLabel = require("../facebook-spam-remover.user")()["getLanguageLabel"]
-        expect(getLanguageLabel).toBeDefined()
-        expect(getLanguageLabel("en", "post")).toBe("News Feed posts")
-        expect(getLanguageLabel("zh-Hant", "post")).toBe("動態消息貼文")
+    describe("LanguageResource", () => {
+        it("getLanguageLabel", () => {
+            let LanguageResource = require("../facebook-spam-remover.user")()["LanguageResource"];
+            let languageResource = new LanguageResource({
+                "en": {"post": "News Feed posts", "sponsor": "Sponsored"},
+                "zh-Hant": {"post": '動態消息貼文', "sponsor": "贊助"}
+            })
+
+            expect(languageResource.getLanguageLabel).toBeDefined()
+            expect(languageResource.getLanguageLabel("en", "post")).toBe("News Feed posts")
+            expect(languageResource.getLanguageLabel("zh-Hant", "post")).toBe("動態消息貼文")
+        })
+
+        it("isLanguageSupported", () => {
+            let LanguageResource = require("../facebook-spam-remover.user")()["LanguageResource"];
+            let languageResource = new LanguageResource({
+                "en": {"post": "News Feed posts", "sponsor": "Sponsored"},
+                "zh-Hant": {"post": '動態消息貼文', "sponsor": "贊助"}
+            })
+
+            expect(languageResource.isLanguageSupported).toBeDefined()
+            expect(languageResource.isLanguageSupported("en")).toBeTruthy()
+            expect(languageResource.isLanguageSupported("zh-Hant")).toBeTruthy()
+            expect(languageResource.isLanguageSupported("nl")).toBeFalsy()
+        })
     })
 
     it("getPosts", () => {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Facebook Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.3.2
+// @version      0.3.3
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -11,28 +11,65 @@
 // @grant        none
 // ==/UserScript==
 const facebookSpamRemover = function () {
+    class LanguageResource {
+        languageLabel
+
+        constructor(languageLabel) {
+            this
+                .languageLabel = languageLabel;
+        }
+
+        /**
+         * @param {String} language
+         * @param {String} labelName
+         * @return {String}
+         */
+        getLanguageLabel(language, labelName) {
+            return this.languageLabel[language][labelName]
+        }
+
+        /**
+         * @param {String} language
+         * @return {Boolean}
+         */
+        isLanguageSupported(language) {
+            return this.languageLabel[language] !== undefined;
+        }
+    }
+
+    let languageResource = new LanguageResource({
+        "en": {"post": "News Feed posts", "sponsor": "Sponsored"},
+        "zh-Hant": {"post": '動態消息貼文', "sponsor": "贊助"}
+    })
     console.log("start facebook spam remover")
     const language = getLanguage()
+    let postLabel = languageResource.getLanguageLabel(language, "post")
+    let sponsorLabel = languageResource.getLanguageLabel(language, "sponsor")
+    let isSupported = languageResource.isLanguageSupported(language)
+    if (!isSupported) {
+        console.log(`language ${language} is not supported, consider raise issue for language support`)
+        return
+    }
     console.log(`language is ${language}`)
-    focusHiddenUrlPostLinks()
-    hideSponsorPost()
+    focusHiddenUrlPostLinks(postLabel)
+    hideSponsorPost(postLabel, sponsorLabel)
     setInterval(() => {
-        focusHiddenUrlPostLinks()
+        focusHiddenUrlPostLinks(postLabel)
     }, 800);
     setInterval(() => {
-        hideSponsorPost()
+        hideSponsorPost(postLabel, sponsorLabel)
     }, 1000);
     var lastRunPostLength = 0;
 
-    function hideSponsorPost() {
-        let posts = getPosts(getLanguageLabel(language, "post"))
+    function hideSponsorPost(postLabel, sponsorLabel) {
+        let posts = getPosts(postLabel)
             .filter(value => value.style.display !== 'none')
         if (posts.length === 0) return
         if (posts.length === lastRunPostLength) {
             console.debug(`post length no change: ${posts.length}`)
         }
-        let sponsorUseTextId = getSponsorUseTextId(getLanguageLabel(language, "sponsor"))
-        let sponsorLabelId = getSponsorLabelId(getLanguageLabel(language, "sponsor"))
+        let sponsorUseTextId = getSponsorUseTextId(sponsorLabel)
+        let sponsorLabelId = getSponsorLabelId(sponsorLabel)
         if (sponsorUseTextId === "" && sponsorLabelId === "") {
             console.debug(`sponsorUseTextId and sponsorLabelId are empty`)
         }
@@ -49,8 +86,10 @@ const facebookSpamRemover = function () {
         return document.querySelector("html").getAttribute("lang")
     }
 
-    function focusHiddenUrlPostLinks() {
-        let postLabel = getLanguageLabel(language, "post")
+    /**
+     * @param {String} postLabel
+     */
+    function focusHiddenUrlPostLinks(postLabel) {
         let parent = Array.from(document.querySelectorAll("div[role=main] h3"))
             .find(el => el.textContent === postLabel)
             .parentElement
@@ -67,19 +106,6 @@ const facebookSpamRemover = function () {
             .find(el => el.textContent === postLabel)
             .parentElement
         return Array.from(Array.from(parent.children).find(el => el.tagName === "DIV").children)
-    }
-
-    /**
-     * @param {String} language
-     * @param {String} labelName
-     * @return {String}
-     */
-    function getLanguageLabel(language, labelName) {
-        const languageLabel = {
-            "en": {"post": "News Feed posts", "sponsor": "Sponsored"},
-            "zh-Hant": {"post": '動態消息貼文', "sponsor": "贊助"}
-        }
-        return languageLabel[language][labelName]
     }
 
     /**
@@ -136,7 +162,7 @@ const facebookSpamRemover = function () {
     // for unit testing
     return {
         "getLanguage": getLanguage,
-        "getLanguageLabel": getLanguageLabel,
+        "LanguageResource": LanguageResource,
         "getPosts": getPosts,
         "getSponsorLabelId": getSponsorLabelId,
         "isSponsorPost": isSponsorPost,
