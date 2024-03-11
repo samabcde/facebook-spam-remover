@@ -6,8 +6,8 @@
 // @author       Samabcde
 // @match        https://www.facebook.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=facebook.com
-// @updateURL    TODO
-// @downloadURL  TODO
+// @updateURL    https://github.com/samabcde/facebook-spam-remover/raw/main/src/js/facebook-spam-remover.user.js
+// @downloadURL  https://github.com/samabcde/facebook-spam-remover/raw/main/src/js/facebook-spam-remover.user.js
 // @grant        none
 // ==/UserScript==
 const facebookSpamRemover = function () {
