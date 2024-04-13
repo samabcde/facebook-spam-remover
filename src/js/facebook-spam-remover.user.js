@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Facebook Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.3.3
+// @version      0.3.4
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -105,7 +105,9 @@ const facebookSpamRemover = function () {
         let parent = Array.from(document.querySelectorAll("div[role=main] h3"))
             .find(el => el.textContent === postLabel)
             .parentElement
-        return Array.from(Array.from(parent.children).find(el => el.tagName === "DIV").children)
+        return Array.from(Array.from(parent.children).find(el => el.tagName === "DIV"
+            && el.getAttribute("aria-hidden") !== "true"
+        ).children)
     }
 
     /**
