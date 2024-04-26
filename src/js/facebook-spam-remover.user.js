@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Facebook Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.3.4
+// @version      0.3.5
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -90,11 +90,17 @@ const facebookSpamRemover = function () {
      * @param {String} postLabel
      */
     function focusHiddenUrlPostLinks(postLabel) {
-        let parent = Array.from(document.querySelectorAll("div[role=main] h3"))
-            .find(el => el.textContent === postLabel)
-            .parentElement
-        Array.from(parent.querySelectorAll("a[href='#']:not([aria-label])"))
+        let parent = getPostContainer(postLabel)
+        getHiddenUrlPostLinks(parent)
             .forEach(value => value.focus({preventScroll: true}))
+    }
+
+    /**
+     * @param {HTMLElement} postContainer
+     * @return {Element[]}
+     */
+    function getHiddenUrlPostLinks(postContainer) {
+        return Array.from(postContainer.querySelectorAll("a[href^='?__cft__']:not([aria-label])"))
     }
 
     /**
@@ -102,14 +108,22 @@ const facebookSpamRemover = function () {
      * @return {Element[]}
      */
     function getPosts(postLabel) {
-        let parent = Array.from(document.querySelectorAll("div[role=main] h3"))
-            .find(el => el.textContent === postLabel)
-            .parentElement
+        let parent = getPostContainer(postLabel);
         return Array.from(Array.from(parent.children).find(el => el.tagName === "DIV"
             && el.getAttribute("aria-hidden") !== "true"
         ).children)
     }
 
+
+    /**
+     * @param {String} postLabel
+     * @return {HTMLElement}
+     */
+    function getPostContainer(postLabel) {
+        return Array.from(document.querySelectorAll("div[role=main] h3"))
+            .find(el => el.textContent === postLabel)
+            .parentElement
+    }
     /**
      * @param {String} sponsorLabel
      * @return {String}
@@ -169,6 +183,7 @@ const facebookSpamRemover = function () {
         "getSponsorLabelId": getSponsorLabelId,
         "isSponsorPost": isSponsorPost,
         "getSponsorUseTextId": getSponsorUseTextId,
+        "getHiddenUrlPostLinks": getHiddenUrlPostLinks,
     };
 }
 facebookSpamRemover()

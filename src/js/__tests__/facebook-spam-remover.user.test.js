@@ -78,14 +78,36 @@ describe("facebook-spam-remover spec", () => {
         it("determine by use tag", () => {
             const isSponsorPost = require("../facebook-spam-remover.user")()["isSponsorPost"]
             let post = fromHTML("<div><use xlink:href='#sponsor' xmlns:xlink='http://www.w3.org/1999/xlink'></use></div>")
-            expect(isSponsorPost(post, "", "sponsor")).toBeTruthy()
-            expect(isSponsorPost(post, "", "not-exist-id")).toBeFalsy()
+            expect(isSponsorPost(post, '', "sponsor")).toBeTruthy()
+            expect(isSponsorPost(post, '', "not-exist-id")).toBeFalsy()
         })
         it("determine by aria-labelledby", () => {
             const isSponsorPost = require("../facebook-spam-remover.user")()["isSponsorPost"]
             let post = fromHTML("<div><span aria-labelledby='sponsor'>test</span></div>")
-            expect(isSponsorPost(post, 'sponsor', "")).toBeTruthy()
-            expect(isSponsorPost(post, 'not-exist-id', "")).toBeFalsy()
+            expect(isSponsorPost(post, 'sponsor', '')).toBeTruthy()
+            expect(isSponsorPost(post, 'not-exist-id', '')).toBeFalsy()
+        })
+        it("determine by aria-labelledby", () => {
+            const isSponsorPost = require("../facebook-spam-remover.user")()["isSponsorPost"]
+            expect(isSponsorPost(fromHTML("<div><a href='/ads/about'></a></div>"), '', '')).toBeTruthy()
+            expect(isSponsorPost(fromHTML("<div><a href='/something_else'></a></div>"), '', '')).toBeFalsy()
+        })
+    })
+
+    describe('getHiddenUrlPostLinks', () => {
+        it("href should start with '?__cft__'", () => {
+            const getHiddenUrlPostLinks = require("../facebook-spam-remover.user")()["getHiddenUrlPostLinks"]
+            let post = fromHTML("<div><a id='1' href='?__cft__'></a><a id='2' href='/some_link'></a></div>")
+            let actual = getHiddenUrlPostLinks(post)
+            expect(actual.length).toBe(1)
+            expect(actual[0].id).toBe('1')
+        })
+
+        it("should not have aria-label attribute", () => {
+            const getHiddenUrlPostLinks = require("../facebook-spam-remover.user")()["getHiddenUrlPostLinks"]
+            let post = fromHTML("<div><a id='2' aria-label='' href='?__cft__'></a></div>")
+            let actual = getHiddenUrlPostLinks(post)
+            expect(actual.length).toBe(0)
         })
     })
 
