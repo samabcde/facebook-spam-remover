@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Facebook Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.4.1
+// @version      0.4.2
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
