@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Facebook Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.3.5
+// @version      0.4.0
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -59,7 +59,15 @@ const facebookSpamRemover = function () {
     setInterval(() => {
         hideSponsorPost(postLabel, sponsorLabel)
     }, 1000);
+    setInterval(() => {
+        hideComplementarySponsor(sponsorLabel)
+    }, 5000);
     var lastRunPostLength = 0;
+
+    function hideComplementarySponsor(sponsorLabel) {
+        let complementaryContainer = getComplementaryContainer()
+        getComplementarySponsor(complementaryContainer, sponsorLabel).style.display = 'none'
+    }
 
     function hideSponsorPost(postLabel, sponsorLabel) {
         let posts = getPosts(postLabel)
@@ -124,6 +132,31 @@ const facebookSpamRemover = function () {
             .find(el => el.textContent === postLabel)
             .parentElement
     }
+
+    /**
+     * @param {String} postLabel
+     * @return {HTMLElement}
+     */
+    function getComplementaryContainer() {
+        return Array.from(document.querySelectorAll("div[role=complementary]"))[0]
+    }
+
+    /**
+     * @param {String} sponsorLabel
+     * @return {HTMLElement}
+     */
+    function getComplementarySponsor(complementaryContainer, sponsorLabel) {
+        return Array.from(a[0].querySelectorAll("span"))
+        .find(el=>el.textContent == sponsorLabel)
+        .parentElement
+        .parentElement
+        .parentElement
+        .parentElement
+        .parentElement
+        .parentElement
+        .parentElement
+    }
+
     /**
      * @param {String} sponsorLabel
      * @return {String}
