@@ -65,7 +65,7 @@ const facebookSpamRemover = function () {
     var lastRunPostLength = 0;
 
     function hideComplementarySponsor(sponsorLabel) {
-        let complementaryContainer = getComplementaryContainer
+        let complementaryContainer = getComplementaryContainer()
         console.debug(`complementaryContainer is : ${complementaryContainer.toString}`)
         let sponsor = getComplementarySponsor(complementaryContainer, sponsorLabel)
         sponsor.style.display = 'none'
@@ -148,7 +148,7 @@ const facebookSpamRemover = function () {
      * @return {HTMLElement}
      */
     function getComplementarySponsor(complementaryContainer, sponsorLabel) {
-        return Array.from(a[0].querySelectorAll("span"))
+        return Array.from(complementaryContainer.querySelectorAll("span"))
         .find(el=>el.textContent == sponsorLabel)
         .parentElement
         .parentElement
