@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Facebook Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.4.0
+// @version      0.4.1
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -65,8 +65,10 @@ const facebookSpamRemover = function () {
     var lastRunPostLength = 0;
 
     function hideComplementarySponsor(sponsorLabel) {
-        let complementaryContainer = getComplementaryContainer()
-        getComplementarySponsor(complementaryContainer, sponsorLabel).style.display = 'none'
+        let complementaryContainer = getComplementaryContainer
+        console.debug(`complementaryContainer is : ${complementaryContainer.toString}`)
+        let sponsor = getComplementarySponsor(complementaryContainer, sponsorLabel)
+        sponsor.style.display = 'none'
     }
 
     function hideSponsorPost(postLabel, sponsorLabel) {
