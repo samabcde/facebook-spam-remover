@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Facebook Spam
 // @namespace    http://tampermonkey.net/
-// @version      0.4.2
+// @version      0.4.3
 // @description  Removes Facebook Spam
 // @author       Samabcde
 // @match        https://www.facebook.com/*
@@ -53,6 +53,7 @@ const facebookSpamRemover = function () {
     console.log(`language is ${language}`)
     focusHiddenUrlPostLinks(postLabel)
     hideSponsorPost(postLabel, sponsorLabel)
+    hideComplementarySponsor(sponsorLabel)
     setInterval(() => {
         focusHiddenUrlPostLinks(postLabel)
     }, 800);
@@ -61,7 +62,7 @@ const facebookSpamRemover = function () {
     }, 1000);
     setInterval(() => {
         hideComplementarySponsor(sponsorLabel)
-    }, 5000);
+    }, 3000);
     var lastRunPostLength = 0;
 
     function hideComplementarySponsor(sponsorLabel) {
